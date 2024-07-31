@@ -1,0 +1,45 @@
+{
+  "name": "kermage/plugin-readme-helpers",
+  "description": "Set of classes for handling WordPress plugin readme files.",
+  "license": "GPL-3.0-only",
+  "authors": [
+    {
+      "name": "Gene Alyson Fortunado Torcende",
+      "email": "genealyson.torcende@gmail.com"
+    }
+  ],
+  "keywords": [
+    "wordpress"
+  ],
+  "config": {
+    "allow-plugins": {
+      "phpstan/extension-installer": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "require": {
+    "ext-json": "*",
+    "php": "^8.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "kermage\\PluginReadmeHelpers\\": "src"
+    }
+  },
+  "require-dev": {
+    "themeplate/tester": "^2.2"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests"
+    }
+  },
+  "scripts": {
+    "analyse": "themeplate analyse",
+    "lint": "themeplate lint",
+    "fix": "themeplate fix",
+    "test": "themeplate test",
+    "test:unit": "themeplate test --type unit",
+    "test:integration": "themeplate test --type integration"
+  }
+}
