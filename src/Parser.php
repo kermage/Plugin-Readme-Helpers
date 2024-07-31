@@ -26,6 +26,28 @@ class Parser
     {
         $lines = explode("\n", $content);
         $data = ['name' => trim($this->getNextNonEmptyLine($lines), self::HEADER_TRIMMER)];
+
+        $this->addHeaders($data, $lines);
+
+        $data['short_description'] = trim($this->getNextNonEmptyLine($lines));
+        $data['sections'] = $this->getAndSetSections($data, $lines);
+
+        return $data;
+    }
+
+    protected function getNextNonEmptyLine(&$lines): string
+    {
+        while (null !== $line = array_shift($lines)) {
+            if (!empty(trim($line))) {
+                break;
+            }
+        }
+
+        return $line ?? '';
+    }
+
+    protected function addHeaders(array &$data, array &$lines): void
+    {
         $headers = [];
 
         while (null !== $line = array_shift($lines)) {
@@ -45,21 +67,6 @@ class Parser
         }
 
         $data += $headers;
-
-        $data['short_description'] = trim($this->getNextNonEmptyLine($lines));
-
-        return $data;
-    }
-
-    protected function getNextNonEmptyLine(&$lines): string
-    {
-        while (null !== $line = array_shift($lines)) {
-            if (!empty(trim($line))) {
-                break;
-            }
-        }
-
-        return $line ?? '';
     }
 
     protected function maybeHeader(string $line): ?array
@@ -77,5 +84,35 @@ class Parser
         }
 
         return compact('key', 'value');
+    }
+
+    protected function getAndSetSections(array &$data, array &$lines): array
+    {
+        $sections = [];
+        $title = $content = '';
+
+        while (null !== $line = array_shift($lines)) {
+            $line = trim($line);
+
+            if (
+                (str_starts_with($line, '##') && '#' !== $line[2]) ||
+                (str_starts_with($line, '==') && '=' !== $line[2])
+            ) {
+                if ($title) {
+                    $sections[$title] = trim($content);
+                }
+
+                $content = '';
+                $title = strtolower(trim($line, self::HEADER_TRIMMER));
+            }
+
+            $content .= $line . "\n";
+        }
+
+        if ($title) {
+            $sections[$title] = trim($content);
+        }
+
+        return $sections;
     }
 }

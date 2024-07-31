@@ -13,8 +13,15 @@ class ParserTest extends TestCase
 {
     public function testParse(): void
     {
-        $parser = new Parser();
+        $parsed = (new Parser())->parse(file_get_contents(__DIR__ . '/fixtures/readme.txt'));
 
+        $this->assertArrayHasKey('sections', $parsed);
+        $this->assertSame(
+            ['description', 'installation', 'screenshots', 'changelog'],
+            array_keys($parsed['sections'])
+        );
+
+        unset($parsed['sections']);
         $this->assertEquals(
             [
                 'name' => 'Test Plugin',
@@ -29,7 +36,7 @@ class ParserTest extends TestCase
                 'tags' => 'basic, sample',
                 'short_description' => 'Here is a short description of the plugin.',
             ],
-            $parser->parse(file_get_contents(__DIR__ . '/fixtures/readme.txt'))
+            $parsed
         );
     }
 }
