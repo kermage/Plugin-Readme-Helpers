@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @package Plugin Readme Helpers
+ */
+
+namespace Tests;
+
+use PHPUnit\Framework\TestCase;
+use kermage\PluginReadmeHelpers\Parser;
+
+class ParserTest extends TestCase
+{
+    public function testParse(): void
+    {
+        $parser = new Parser();
+
+        $this->assertEquals(
+            [
+                'name' => 'Test Plugin',
+                'tested' => '6.6.1',
+                'requires' => '5.9',
+                'requires_php' => '8.2',
+                'stable_tag' => '0.2.0',
+                'contributors' => 'gaft',
+                'donate_link' => 'https://www.paypal.me/GAFT',
+                'license_uri' => 'https://www.gnu.org/licenses/licenses.html',
+                'license' => 'GPLv3',
+                'tags' => 'basic, sample',
+                'short_description' => 'Here is a short description of the plugin.',
+            ],
+            $parser->parse(file_get_contents(__DIR__ . '/fixtures/readme.txt'))
+        );
+    }
+}
