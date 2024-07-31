@@ -20,7 +20,13 @@ class Parser
         'tags' => 'tags',
     ];
 
-    public const HEADER_TRIMMER = '#= \t';
+    public const SECTIONS_MAP = [
+        'frequently_asked_questions' => 'faq',
+        'change_log' => 'changelog',
+        'screenshot' => 'screenshots',
+    ];
+
+    public const HEADER_TRIMMER = "#= \t";
 
     public function parse(string $content): array
     {
@@ -62,7 +68,7 @@ class Parser
             $header = $this->maybeHeader($line);
 
             if ($header) {
-                $headers[self::HEADERS_MAP[$header['key']]] = $header['value'];
+                $headers[$header['key']] = $header['value'];
             }
         }
 
@@ -82,6 +88,8 @@ class Parser
         if (! in_array($key, array_keys(self::HEADERS_MAP))) {
             return null;
         }
+
+        $key = self::HEADERS_MAP[$key];
 
         return compact('key', 'value');
     }
@@ -103,7 +111,11 @@ class Parser
                 }
 
                 $content = '';
-                $title = strtolower(trim($line, self::HEADER_TRIMMER));
+                $title = strtolower(str_replace(' ', '_', trim($line, self::HEADER_TRIMMER)));
+
+                if (isset(self::SECTIONS_MAP[$title])) {
+                    $title = self::SECTIONS_MAP[$title];
+                }
             }
 
             $content .= $line . "\n";

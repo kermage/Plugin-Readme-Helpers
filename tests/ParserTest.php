@@ -17,7 +17,7 @@ class ParserTest extends TestCase
 
         $this->assertArrayHasKey('sections', $parsed);
         $this->assertSame(
-            ['description', 'installation', 'screenshots', 'changelog'],
+            ['description', 'installation', 'faq', 'screenshots', 'changelog'],
             array_keys($parsed['sections'])
         );
 
