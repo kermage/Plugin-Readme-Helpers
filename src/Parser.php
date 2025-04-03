@@ -36,7 +36,7 @@ class Parser
         $this->addHeaders($data, $lines);
 
         $data['short_description'] = trim($this->getNextNonEmptyLine($lines));
-        $data['sections'] = $this->getAndSetSections($data, $lines);
+        $data['sections'] = $this->getAndSetSections($lines);
 
         return $data;
     }
@@ -94,7 +94,7 @@ class Parser
         return compact('key', 'value');
     }
 
-    protected function getAndSetSections(array &$data, array &$lines): array
+    protected function getAndSetSections(array &$lines): array
     {
         $sections = [];
         $title = $content = '';
