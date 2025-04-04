@@ -43,7 +43,7 @@ class Parser
     protected function getNextNonEmptyLine(&$lines): string
     {
         while (null !== $line = array_shift($lines)) {
-            if (!empty(trim($line))) {
+            if ('' !== trim($line)) {
                 break;
             }
         }
@@ -56,8 +56,8 @@ class Parser
         $headers = [];
 
         while (null !== $line = array_shift($lines)) {
-            if (empty(trim($line))) {
-                if (empty($headers)) {
+            if ('' === trim($line)) {
+                if ([] === $headers) {
                     continue;
                 }
 
@@ -66,7 +66,7 @@ class Parser
 
             $header = $this->maybeHeader($line);
 
-            if ($header) {
+            if (null !== $header) {
                 $headers[$header['key']] = $header['value'];
             }
         }
@@ -105,7 +105,7 @@ class Parser
                 (str_starts_with($line, '##') && '#' !== $line[2]) ||
                 (str_starts_with($line, '==') && '=' !== $line[2])
             ) {
-                if ($title) {
+                if ('' !== $title) {
                     $sections[$title] = trim($content);
                 }
 
@@ -120,7 +120,7 @@ class Parser
             $content .= $line . "\n";
         }
 
-        if ($title) {
+        if ('' !== $title) {
             $sections[$title] = trim($content);
         }
 
