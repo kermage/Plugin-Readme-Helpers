@@ -4,16 +4,18 @@
  * @package Plugin Readme Helpers
  */
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use PHPUnit\Framework\TestCase;
 use kermage\PluginReadmeHelpers\Parser;
 
-class ParserTest extends TestCase
+final class ParserTest extends TestCase
 {
     public function testParse(): void
     {
-        $parsed = (new Parser())->parse(file_get_contents(__DIR__ . '/fixtures/readme.txt'));
+        $parsed = (new Parser())->parse((string) file_get_contents(__DIR__ . '/fixtures/readme.txt'));
 
         $this->assertArrayHasKey('sections', $parsed);
         $this->assertSame(

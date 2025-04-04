@@ -4,8 +4,18 @@
  * @package Plugin Readme Helpers
  */
 
+declare(strict_types=1);
+
 namespace kermage\PluginReadmeHelpers;
 
+/**
+ * @phpstan-type ParsedContent array{
+ *     name: string,
+ *     short_description: string,
+ *     sections: array<string, string>,
+ *     ...<string, string>,
+ * }
+ */
 class Parser
 {
     public const HEADERS_MAP = [
@@ -28,6 +38,7 @@ class Parser
 
     public const HEADER_TRIMMER = "#= \t";
 
+    /** @return ParsedContent */
     public function parse(string $content): array
     {
         $lines = explode("\n", $content);
@@ -37,10 +48,12 @@ class Parser
         $data['short_description'] = trim($this->getNextNonEmptyLine($lines));
         $data['sections'] = $this->getAndSetSections($lines);
 
+        /** @var ParsedContent $data */
         return $data;
     }
 
-    protected function getNextNonEmptyLine(&$lines): string
+    /** @param string[] $lines */
+    protected function getNextNonEmptyLine(array &$lines): string
     {
         while (null !== $line = array_shift($lines)) {
             if ('' !== trim($line)) {
@@ -51,6 +64,10 @@ class Parser
         return $line ?? '';
     }
 
+    /**
+     * @param string[] $lines
+     * @return array<string, string>
+     */
     protected function getHeaders(array &$lines): array
     {
         $headers = [];
@@ -74,6 +91,7 @@ class Parser
         return $headers;
     }
 
+    /** @return array{key: string, value: string}|null */
     protected function maybeHeader(string $line): ?array
     {
         if (! str_contains($line, ':') || str_starts_with($line, '#') || str_starts_with($line, '=')) {
@@ -93,6 +111,10 @@ class Parser
         return compact('key', 'value');
     }
 
+    /**
+     * @param string[] $lines
+     * @return array<string, string>
+     */
     protected function getAndSetSections(array &$lines): array
     {
         $sections = [];
