@@ -80,7 +80,7 @@ class Parser
             return null;
         }
 
-        list($key, $value) = explode(':', $line, 2);
+        [$key, $value] = explode(':', $line, 2);
         $key = strtolower(trim($key));
         $value = trim($value);
 
@@ -96,7 +96,8 @@ class Parser
     protected function getAndSetSections(array &$lines): array
     {
         $sections = [];
-        $title = $content = '';
+        $title = '';
+        $content = '';
 
         while (null !== $line = array_shift($lines)) {
             $line = trim($line);
