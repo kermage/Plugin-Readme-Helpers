@@ -32,8 +32,7 @@ class Parser
     {
         $lines = explode("\n", $content);
         $data = ['name' => trim($this->getNextNonEmptyLine($lines), self::HEADER_TRIMMER)];
-
-        $this->addHeaders($data, $lines);
+        $data += $this->getHeaders($lines);
 
         $data['short_description'] = trim($this->getNextNonEmptyLine($lines));
         $data['sections'] = $this->getAndSetSections($lines);
@@ -52,7 +51,7 @@ class Parser
         return $line ?? '';
     }
 
-    protected function addHeaders(array &$data, array &$lines): void
+    protected function getHeaders(array &$lines): array
     {
         $headers = [];
 
@@ -72,7 +71,7 @@ class Parser
             }
         }
 
-        $data += $headers;
+        return $headers;
     }
 
     protected function maybeHeader(string $line): ?array
