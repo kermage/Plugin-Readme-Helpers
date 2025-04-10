@@ -40,8 +40,22 @@ class Parser
 
     public const HEADER_TRIMMER = "#= \t";
 
+    protected function __construct()
+    {
+    }
+
     /** @return ParsedContent */
-    public function parse(string $content): array
+    public static function parse(string $data): array
+    {
+        if (false === strpos($data, "\n")) {
+            $data = file_exists($data) ? (string) file_get_contents($data) : '';
+        }
+
+        return (new self())->parseString($data);
+    }
+
+    /** @return ParsedContent */
+    protected function parseString(string $content): array
     {
         $lines = explode("\n", $content);
         $data = ['name' => trim($this->getNextNonEmptyLine($lines), self::HEADER_TRIMMER)];

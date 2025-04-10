@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 use kermage\PluginReadmeHelpers\Parser;
 use PHPUnit\Framework\Attributes\DataProvider;
 
+/** @phpstan-import-type ParsedContent from Parser */
 final class ParserTest extends TestCase
 {
     /** @return array<int, string[]> */
@@ -26,14 +27,49 @@ final class ParserTest extends TestCase
     #[DataProvider('forTestParse')]
     public function testParse(string $file): void
     {
-        $parsed = (new Parser())->parse((string) file_get_contents($file));
+        $parsed = Parser::parse($file);
 
+        $this->assertArrayHasKey('name', $parsed);
+        $this->assertArrayHasKey('short_description', $parsed);
         $this->assertArrayHasKey('sections', $parsed);
         $this->assertSame(
             ['description', 'installation', 'faq', 'screenshots', 'changelog'],
             array_keys($parsed['sections'])
         );
 
+        $this->assertBase($parsed);
+    }
+
+    public function testParseString(): void
+    {
+        $content = <<<'EOF'
+Test Plugin
+
+Stable tag: 0.2.0
+Tested up to: 6.6.1
+Requires at least: 5.9
+Requires PHP: 8.2
+License: GPLv3
+License URI: https://www.gnu.org/licenses/licenses.html
+Tags: basic, sample
+Contributors: gaft
+Donate link: https://www.paypal.me/GAFT
+
+Here is a short description of the plugin.
+EOF;
+
+        $parsed = Parser::parse($content);
+
+        $this->assertArrayHasKey('name', $parsed);
+        $this->assertArrayHasKey('short_description', $parsed);
+        $this->assertArrayHasKey('sections', $parsed);
+        $this->assertEmpty($parsed['sections']);
+        $this->assertBase($parsed);
+    }
+
+    /** @param ParsedContent $parsed */
+    protected function assertBase(array $parsed): void
+    {
         unset($parsed['sections']);
         $this->assertEquals(
             [
@@ -51,5 +87,29 @@ final class ParserTest extends TestCase
             ],
             $parsed
         );
+    }
+
+    /** @return array<int, string[]> */
+    public static function forTestParseInvalid(): array
+    {
+        return [
+            [ '' ],
+            [ "\n" ],
+            [ 'lorem ipsum dolor sit amet' ],
+            [ __DIR__ . '/fixtures/readme2.md' ],
+        ];
+    }
+
+    #[DataProvider('forTestParseInvalid')]
+    public function testParseInvalid(string $content): void
+    {
+        $parsed = Parser::parse($content);
+
+        $this->assertArrayHasKey('name', $parsed);
+        $this->assertEmpty($parsed['name']);
+        $this->assertArrayHasKey('short_description', $parsed);
+        $this->assertEmpty($parsed['short_description']);
+        $this->assertArrayHasKey('sections', $parsed);
+        $this->assertEmpty($parsed['sections']);
     }
 }
