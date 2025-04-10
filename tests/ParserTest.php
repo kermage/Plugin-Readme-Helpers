@@ -10,12 +10,23 @@ namespace Tests;
 
 use PHPUnit\Framework\TestCase;
 use kermage\PluginReadmeHelpers\Parser;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class ParserTest extends TestCase
 {
-    public function testParse(): void
+    /** @return array<int, string[]> */
+    public static function forTestParse(): array
     {
-        $parsed = (new Parser())->parse((string) file_get_contents(__DIR__ . '/fixtures/readme.txt'));
+        return [
+            [ __DIR__ . '/fixtures/readme.txt' ],
+            [ __DIR__ . '/fixtures/readme.md' ],
+        ];
+    }
+
+    #[DataProvider('forTestParse')]
+    public function testParse(string $file): void
+    {
+        $parsed = (new Parser())->parse((string) file_get_contents($file));
 
         $this->assertArrayHasKey('sections', $parsed);
         $this->assertSame(
