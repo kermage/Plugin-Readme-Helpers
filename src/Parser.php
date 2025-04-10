@@ -57,6 +57,7 @@ class Parser
     /** @return ParsedContent */
     protected function parseString(string $content): array
     {
+        $content = str_replace("\r", "", $content);
         $lines = explode("\n", $content);
         $data = ['name' => trim($this->getNextNonEmptyLine($lines), self::HEADER_TRIMMER)];
         $data += $this->getHeaders($lines);
