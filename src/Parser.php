@@ -47,8 +47,12 @@ class Parser
     /** @return ParsedContent */
     public static function parse(string $data): array
     {
+        $data = trim($data);
+
         if (false === strpos($data, "\n")) {
-            $data = file_exists($data) ? (string) file_get_contents($data) : '';
+            $data = (file_exists($data) || filter_var($data, FILTER_VALIDATE_URL))
+                ? (string) file_get_contents($data)
+                : '';
         }
 
         return (new self())->parseString($data);

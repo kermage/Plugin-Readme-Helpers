@@ -21,6 +21,7 @@ final class ParserTest extends TestCase
         return [
             [ __DIR__ . '/fixtures/readme.txt' ],
             [ __DIR__ . '/fixtures/readme.md' ],
+            [ 'https://raw.githubusercontent.com/kermage/Plugin-Readme-Helpers/refs/heads/main/tests/fixtures/readme.txt' ], // phpcs:ignore Generic.Files.LineLength.TooLong
         ];
     }
 
