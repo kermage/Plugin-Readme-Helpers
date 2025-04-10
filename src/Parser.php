@@ -19,7 +19,9 @@ namespace kermage\PluginReadmeHelpers;
 class Parser
 {
     public const HEADERS_MAP = [
+        'tested' => 'tested',
         'tested up to' => 'tested',
+        'requires' => 'requires',
         'requires at least' => 'requires',
         'requires php' => 'requires_php',
         'stable tag' => 'stable_tag',

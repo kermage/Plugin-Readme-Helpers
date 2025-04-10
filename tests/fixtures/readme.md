@@ -1,8 +1,8 @@
 # Test Plugin
 
 Stable tag: 0.2.0
-Tested up to: 6.6.1
-Requires at least: 5.9
+Tested: 6.6.1
+Requires: 5.9
 Requires PHP: 8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/licenses.html
