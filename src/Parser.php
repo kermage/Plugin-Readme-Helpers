@@ -40,8 +40,6 @@ class Parser
 
     public const HEADER_TRIMMER = "#= \t";
 
-    protected bool $isPhp;
-
     protected function __construct()
     {
     }
@@ -66,22 +64,29 @@ class Parser
         $content = str_replace("\r", "", $content);
         $lines = explode("\n", $content);
         $data = ['name' => trim($this->getNextNonEmptyLine($lines), self::HEADER_TRIMMER)];
-        $this->isPhp = $this->maybePhpOrComment($data['name']);
+        $isPhp = str_contains($data['name'], '<?php');
+        $mapper = self::HEADERS_MAP;
 
-        if ($this->isPhp) {
-            while ($this->maybePhpOrComment($data['name'])) {
+        if ($isPhp) {
+            while ('' !== $data['name'] && ! str_starts_with($data['name'], '*')) {
                 $data['name'] = trim($this->getNextNonEmptyLine($lines));
             }
 
-            if (str_starts_with($data['name'], '*')) {
+            if ('' !== $data['name']) {
                 array_unshift($lines, $data['name']);
                 unset($data['name']);
             }
+
+            $mapper += [
+                'plugin name' => 'name',
+                'version' => 'stable_tag',
+                'description' => 'short_description',
+            ];
         }
 
-        $data += $this->getHeaders($lines);
+        $data += $this->getHeaders($lines, $mapper);
 
-        if (! $this->isPhp) {
+        if (! $isPhp) {
             $data['short_description'] = trim($this->getNextNonEmptyLine($lines));
         }
 
@@ -110,9 +115,10 @@ class Parser
 
     /**
      * @param string[] $lines
+     * @param array<string, string> $mapper
      * @return array<string, string>
      */
-    protected function getHeaders(array &$lines): array
+    protected function getHeaders(array &$lines, array $mapper): array
     {
         $headers = [];
 
@@ -125,7 +131,7 @@ class Parser
                 break;
             }
 
-            $header = $this->maybeHeader($line);
+            $header = $this->maybeHeader($line, $mapper);
 
             if (null !== $header) {
                 $headers[$header['key']] = $header['value'];
@@ -135,8 +141,11 @@ class Parser
         return $headers;
     }
 
-    /** @return array{key: string, value: string}|null */
-    protected function maybeHeader(string $line): ?array
+    /**
+     * @param array<string, string> $mapper
+     * @return array{key: string, value: string}|null
+     */
+    protected function maybeHeader(string $line, array $mapper): ?array
     {
         if (! str_contains($line, ':') || str_starts_with($line, '#') || str_starts_with($line, '=')) {
             return null;
@@ -147,19 +156,11 @@ class Parser
         $value = trim($value);
         $map = self::HEADERS_MAP;
 
-        if ($this->isPhp) {
-            $map += [
-                'plugin name' => 'name',
-                'version' => 'stable_tag',
-                'description' => 'short_description',
-            ];
-        }
-
-        if (! in_array($key, array_keys($map))) {
+        if (! in_array($key, array_keys($mapper))) {
             return null;
         }
 
-        $key = $map[$key];
+        $key = $mapper[$key];
 
         return compact('key', 'value');
     }
