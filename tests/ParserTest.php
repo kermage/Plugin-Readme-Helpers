@@ -113,4 +113,25 @@ EOF;
         $this->assertArrayHasKey('sections', $parsed);
         $this->assertEmpty($parsed['sections']);
     }
+
+    public function testParsePlugin(): void
+    {
+        $parsed = Parser::parse(__DIR__ . '/fixtures/plugin.php');
+
+        $this->assertArrayHasKey('name', $parsed);
+        $this->assertArrayHasKey('short_description', $parsed);
+        $this->assertArrayHasKey('sections', $parsed);
+        $this->assertEmpty($parsed['sections']);
+        $this->assertEquals(
+            [
+                'name' => 'Test Plugin',
+                'stable_tag' => '0.2.0',
+                'short_description' => 'Here is a short description of the plugin.',
+                'requires' => '5.9',
+                'requires_php' => '8.2',
+                'sections' => [],
+            ],
+            $parsed
+        );
+    }
 }

@@ -40,6 +40,8 @@ class Parser
 
     public const HEADER_TRIMMER = "#= \t";
 
+    protected bool $isPhp;
+
     protected function __construct()
     {
     }
@@ -64,9 +66,25 @@ class Parser
         $content = str_replace("\r", "", $content);
         $lines = explode("\n", $content);
         $data = ['name' => trim($this->getNextNonEmptyLine($lines), self::HEADER_TRIMMER)];
+        $this->isPhp = $this->maybePhpOrComment($data['name']);
+
+        if ($this->isPhp) {
+            while ($this->maybePhpOrComment($data['name'])) {
+                $data['name'] = trim($this->getNextNonEmptyLine($lines));
+            }
+
+            if (str_starts_with($data['name'], '*')) {
+                array_unshift($lines, $data['name']);
+                unset($data['name']);
+            }
+        }
+
         $data += $this->getHeaders($lines);
 
-        $data['short_description'] = trim($this->getNextNonEmptyLine($lines));
+        if (! $this->isPhp) {
+            $data['short_description'] = trim($this->getNextNonEmptyLine($lines));
+        }
+
         $data['sections'] = $this->getAndSetSections($lines);
 
         /** @var ParsedContent $data */
@@ -83,6 +101,11 @@ class Parser
         }
 
         return $line ?? '';
+    }
+
+    protected function maybePhpOrComment(string $line): bool
+    {
+        return str_contains($line, '<?php') || str_contains($line, '/**');
     }
 
     /**
@@ -120,14 +143,23 @@ class Parser
         }
 
         [$key, $value] = explode(':', $line, 2);
-        $key = strtolower(trim($key));
+        $key = strtolower(trim($key, "* \t"));
         $value = trim($value);
+        $map = self::HEADERS_MAP;
 
-        if (! in_array($key, array_keys(self::HEADERS_MAP))) {
+        if ($this->isPhp) {
+            $map += [
+                'plugin name' => 'name',
+                'version' => 'stable_tag',
+                'description' => 'short_description',
+            ];
+        }
+
+        if (! in_array($key, array_keys($map))) {
             return null;
         }
 
-        $key = self::HEADERS_MAP[$key];
+        $key = $map[$key];
 
         return compact('key', 'value');
     }
