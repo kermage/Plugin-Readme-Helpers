@@ -66,6 +66,16 @@ class Parser
         $data = ['name' => trim($this->getNextNonEmptyLine($lines), self::HEADER_TRIMMER)];
         $isPhp = str_contains($data['name'], '<?php');
         $mapper = self::HEADERS_MAP;
+        $forPhp = [
+            'plugin uri' => 'Plugin URI',
+            'author' => 'Author',
+            'author uri' => 'Author URI',
+            'text domain' => 'Text Domain',
+            'domain path' => 'Domain Path',
+            'network' => 'Network',
+            'update uri' => 'Update URI',
+            'requires plugins' => 'Requires Plugins',
+        ];
 
         if ($isPhp) {
             while ('' !== $data['name'] && ! str_starts_with($data['name'], '*')) {
@@ -82,6 +92,7 @@ class Parser
                 'version' => 'stable_tag',
                 'description' => 'short_description',
             ];
+            $mapper += $forPhp;
         }
 
         $data += $this->getHeaders($lines, $mapper);
@@ -91,6 +102,23 @@ class Parser
         }
 
         $data['sections'] = $this->getAndSetSections($lines);
+
+        if ($isPhp) {
+            $metadata = [];
+
+            foreach ($forPhp as $key) {
+                if (empty($data[$key])) {
+                    continue;
+                }
+
+                $metadata[$key] = $data[$key];
+                unset($data[$key]);
+            }
+
+            if ([] !== $metadata) {
+                $data['sections']['other_notes'] = json_encode($metadata);
+            }
+        }
 
         /** @var ParsedContent $data */
         return $data;

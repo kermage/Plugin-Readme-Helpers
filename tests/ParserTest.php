@@ -121,7 +121,16 @@ EOF;
         $this->assertArrayHasKey('name', $parsed);
         $this->assertArrayHasKey('short_description', $parsed);
         $this->assertArrayHasKey('sections', $parsed);
-        $this->assertEmpty($parsed['sections']);
+        $this->assertNotEmpty($parsed['sections']);
+        $this->assertArrayHasKey('other_notes', $parsed['sections']);
+
+        $other_notes = json_decode($parsed['sections']['other_notes'], true);
+
+        $this->assertArrayHasKey('Plugin URI', $other_notes);
+        $this->assertArrayHasKey('Author', $other_notes);
+        $this->assertArrayHasKey('Author URI', $other_notes);
+        $this->assertArrayHasKey('Text Domain', $other_notes);
+        unset($parsed['sections']['other_notes']);
         $this->assertEquals(
             [
                 'name' => 'Test Plugin',
@@ -133,5 +142,28 @@ EOF;
             ],
             $parsed
         );
+    }
+
+    public function testParsePluginMetadata(): void
+    {
+        $parsed = Parser::parse(__DIR__ . '/fixtures/metadata.php');
+
+        $this->assertArrayHasKey('name', $parsed);
+        $this->assertArrayHasKey('short_description', $parsed);
+        $this->assertArrayHasKey('sections', $parsed);
+        $this->assertNotEmpty($parsed['sections']);
+        $this->assertArrayHasKey('other_notes', $parsed['sections']);
+        $this->assertNotEmpty($parsed['sections']['other_notes']);
+
+        $other_notes = json_decode($parsed['sections']['other_notes'], true);
+
+        $this->assertArrayHasKey('Plugin URI', $other_notes);
+        $this->assertArrayHasKey('Author', $other_notes);
+        $this->assertArrayHasKey('Author URI', $other_notes);
+        $this->assertArrayHasKey('Text Domain', $other_notes);
+        $this->assertArrayHasKey('Domain Path', $other_notes);
+        $this->assertArrayHasKey('Network', $other_notes);
+        $this->assertArrayHasKey('Update URI', $other_notes);
+        $this->assertArrayHasKey('Requires Plugins', $other_notes);
     }
 }
