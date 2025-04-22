@@ -34,10 +34,12 @@ final class ParserTest extends TestCase
         $this->assertObjectHasProperty('name', $parsed);
         $this->assertObjectHasProperty('short_description', $parsed);
         $this->assertObjectHasProperty('sections', $parsed);
+        $this->assertObjectHasProperty('metadata', $parsed);
         $this->assertSame(
             ['description', 'installation', 'faq', 'screenshots', 'changelog'],
             array_keys($parsed->sections)
         );
+        $this->assertEmpty($parsed->metadata);
     }
 
     public function testParseString(): void
@@ -64,13 +66,15 @@ EOF;
         $this->assertObjectHasProperty('name', $parsed);
         $this->assertObjectHasProperty('short_description', $parsed);
         $this->assertObjectHasProperty('sections', $parsed);
+        $this->assertObjectHasProperty('metadata', $parsed);
         $this->assertEmpty($parsed->sections);
+        $this->assertEmpty($parsed->metadata);
     }
 
     protected function assertBase(ParsedContent $parsed): void
     {
         $parsed = (array) $parsed;
-        unset($parsed['sections']);
+        unset($parsed['sections'], $parsed['metadata']);
         $this->assertEquals(
             [
                 ...TestHelpers::COMMON_DATA,
@@ -102,6 +106,8 @@ EOF;
         $this->assertEmpty($parsed->short_description);
         $this->assertObjectHasProperty('sections', $parsed);
         $this->assertEmpty($parsed->sections);
+        $this->assertObjectHasProperty('metadata', $parsed);
+        $this->assertEmpty($parsed->metadata);
     }
 
     protected function assertPlugin(ParsedContent $parsed, bool $full = false): void
@@ -109,12 +115,13 @@ EOF;
         $this->assertObjectHasProperty('name', $parsed);
         $this->assertObjectHasProperty('short_description', $parsed);
         $this->assertObjectHasProperty('sections', $parsed);
-        $this->assertNotEmpty($parsed->sections);
-        $this->assertArrayHasKey('other_notes', $parsed->sections);
+        $this->assertEmpty($parsed->sections);
+        $this->assertObjectHasProperty('metadata', $parsed);
+        $this->assertNotEmpty($parsed->metadata);
 
         $parsed = (array) $parsed;
 
-        unset($parsed['sections']);
+        unset($parsed['sections'], $parsed['metadata']);
         $this->assertEquals(
             [
                 ...TestHelpers::COMMON_DATA,
@@ -129,12 +136,9 @@ EOF;
         $parsed = Parser::parse(TestHelpers::get('plugin.php'));
 
         $this->assertPlugin($parsed);
-
-        $parsed = (array) $parsed;
-
         $this->assertEquals(
             TestHelpers::BASIC_METADATA,
-            json_decode($parsed['sections']['other_notes'], true)
+            $parsed->metadata
         );
     }
 
@@ -143,15 +147,12 @@ EOF;
         $parsed = Parser::parse(TestHelpers::get('metadata.php'));
 
         $this->assertPlugin($parsed, true);
-
-        $parsed = (array) $parsed;
-
         $this->assertEquals(
             [
                 ...TestHelpers::BASIC_METADATA,
                 ...TestHelpers::FULL_METADATA,
             ],
-            json_decode($parsed['sections']['other_notes'], true)
+            $parsed->metadata
         );
     }
 }

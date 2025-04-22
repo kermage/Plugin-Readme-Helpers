@@ -8,9 +8,6 @@ declare(strict_types=1);
 
 namespace kermage\PluginReadmeHelpers;
 
-use AllowDynamicProperties;
-
-#[AllowDynamicProperties]
 class ParsedContent
 {
     public function __construct(
@@ -27,36 +24,14 @@ class ParsedContent
         public readonly string $tags,
         /** @var array<string, string> */
         public readonly array $sections,
-        string ...$others,
+        /** @var array<string, string> */
+        public readonly array $metadata,
     ) {
-        foreach ($others as $key => $value) {
-            $this->$key = $value;
-        }
     }
 
     /** @param array<mixed> $data */
     public static function create(array $data): ParsedContent
     {
-        $known = [
-            'name',
-            'stable_tag',
-            'short_description',
-            'sections',
-            'requires',
-            'requires_php',
-            'tested',
-            'contributors',
-            'donate_link',
-            'license_uri',
-            'license',
-            'tags',
-        ];
-        $others = array_filter(
-            $data,
-            fn($key) => ! in_array($key, $known, true),
-            ARRAY_FILTER_USE_KEY,
-        );
-
         return new self(
             $data['name'] ?? '',
             $data['stable_tag'] ?? '',
@@ -70,7 +45,7 @@ class ParsedContent
             $data['license'] ?? '',
             $data['tags'] ?? '',
             $data['sections'] ?? [],
-            ...$others,
+            $data['metadata'] ?? [],
         );
     }
 }

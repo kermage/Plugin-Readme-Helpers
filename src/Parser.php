@@ -94,19 +94,15 @@ class Parser
         $data['sections'] = $this->getAndSetSections($lines);
 
         if ($isPhp) {
-            $metadata = [];
+            $data['metadata'] = [];
 
             foreach ($forPhp as $key) {
                 if (empty($data[$key])) {
                     continue;
                 }
 
-                $metadata[$key] = $data[$key];
+                $data['metadata'][$key] = $data[$key];
                 unset($data[$key]);
-            }
-
-            if ([] !== $metadata) {
-                $data['sections']['other_notes'] = json_encode($metadata);
             }
         }
 
