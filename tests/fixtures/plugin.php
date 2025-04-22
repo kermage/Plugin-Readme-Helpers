@@ -29,7 +29,7 @@ use kermage\PluginReadmeHelpers\Parser;
  */
 function parseable(string $content): bool
 {
-    $data = Parser::parse($content);
+    $data = (array) Parser::parse($content);
 
     return ! empty($data['sections']);
 }

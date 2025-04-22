@@ -12,7 +12,6 @@ use PHPUnit\Framework\TestCase;
 use kermage\PluginReadmeHelpers\Parser;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-/** @phpstan-import-type ParsedContent from Parser */
 final class ParserTest extends TestCase
 {
     /** @return array<int, string[]> */
@@ -28,7 +27,7 @@ final class ParserTest extends TestCase
     #[DataProvider('forTestParse')]
     public function testParse(string $file): void
     {
-        $parsed = Parser::parse($file);
+        $parsed = (array) Parser::parse($file);
 
         $this->assertArrayHasKey('name', $parsed);
         $this->assertArrayHasKey('short_description', $parsed);
@@ -59,7 +58,7 @@ Donate link: https://www.paypal.me/GAFT
 Here is a short description of the plugin.
 EOF;
 
-        $parsed = Parser::parse($content);
+        $parsed = (array) Parser::parse($content);
 
         $this->assertArrayHasKey('name', $parsed);
         $this->assertArrayHasKey('short_description', $parsed);
@@ -95,7 +94,7 @@ EOF;
     #[DataProvider('forTestParseInvalid')]
     public function testParseInvalid(string $content): void
     {
-        $parsed = Parser::parse($content);
+        $parsed = (array) Parser::parse($content);
 
         $this->assertArrayHasKey('name', $parsed);
         $this->assertEmpty($parsed['name']);
@@ -125,7 +124,7 @@ EOF;
 
     public function testParsePlugin(): void
     {
-        $parsed = Parser::parse(TestHelpers::get('plugin.php'));
+        $parsed = (array) Parser::parse(TestHelpers::get('plugin.php'));
 
         $this->assertPlugin($parsed);
         $this->assertEquals(
@@ -136,7 +135,7 @@ EOF;
 
     public function testParsePluginMetadata(): void
     {
-        $parsed = Parser::parse(TestHelpers::get('metadata.php'));
+        $parsed = (array) Parser::parse(TestHelpers::get('metadata.php'));
 
         $this->assertPlugin($parsed, true);
         $this->assertEquals(

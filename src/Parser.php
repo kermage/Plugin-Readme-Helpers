@@ -8,14 +8,6 @@ declare(strict_types=1);
 
 namespace kermage\PluginReadmeHelpers;
 
-/**
- * @phpstan-type ParsedContent array{
- *     name: string,
- *     short_description: string,
- *     sections: array<string, string>,
- *     ...<string, string>,
- * }
- */
 class Parser
 {
     public const HEADERS_MAP = [
@@ -44,8 +36,7 @@ class Parser
     {
     }
 
-    /** @return ParsedContent */
-    public static function parse(string $data): array
+    public static function parse(string $data): ParsedContent
     {
         $data = trim($data);
 
@@ -58,8 +49,7 @@ class Parser
         return (new self())->parseString($data);
     }
 
-    /** @return ParsedContent */
-    protected function parseString(string $content): array
+    protected function parseString(string $content): ParsedContent
     {
         $content = str_replace("\r", "", $content);
         $lines = explode("\n", $content);
@@ -120,8 +110,7 @@ class Parser
             }
         }
 
-        /** @var ParsedContent $data */
-        return $data;
+        return ParsedContent::create($data);
     }
 
     /** @param string[] $lines */
