@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Tests;
 
 use PHPUnit\Framework\TestCase;
+use kermage\PluginReadmeHelpers\ParsedContent;
 use kermage\PluginReadmeHelpers\Parser;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -27,17 +28,16 @@ final class ParserTest extends TestCase
     #[DataProvider('forTestParse')]
     public function testParse(string $file): void
     {
-        $parsed = (array) Parser::parse($file);
-
-        $this->assertArrayHasKey('name', $parsed);
-        $this->assertArrayHasKey('short_description', $parsed);
-        $this->assertArrayHasKey('sections', $parsed);
-        $this->assertSame(
-            ['description', 'installation', 'faq', 'screenshots', 'changelog'],
-            array_keys($parsed['sections'])
-        );
+        $parsed = Parser::parse($file);
 
         $this->assertBase($parsed);
+        $this->assertObjectHasProperty('name', $parsed);
+        $this->assertObjectHasProperty('short_description', $parsed);
+        $this->assertObjectHasProperty('sections', $parsed);
+        $this->assertSame(
+            ['description', 'installation', 'faq', 'screenshots', 'changelog'],
+            array_keys($parsed->sections)
+        );
     }
 
     public function testParseString(): void
@@ -58,18 +58,18 @@ Donate link: https://www.paypal.me/GAFT
 Here is a short description of the plugin.
 EOF;
 
-        $parsed = (array) Parser::parse($content);
+        $parsed = Parser::parse($content);
 
-        $this->assertArrayHasKey('name', $parsed);
-        $this->assertArrayHasKey('short_description', $parsed);
-        $this->assertArrayHasKey('sections', $parsed);
-        $this->assertEmpty($parsed['sections']);
         $this->assertBase($parsed);
+        $this->assertObjectHasProperty('name', $parsed);
+        $this->assertObjectHasProperty('short_description', $parsed);
+        $this->assertObjectHasProperty('sections', $parsed);
+        $this->assertEmpty($parsed->sections);
     }
 
-    /** @param ParsedContent $parsed */
-    protected function assertBase(array $parsed): void
+    protected function assertBase(ParsedContent $parsed): void
     {
+        $parsed = (array) $parsed;
         unset($parsed['sections']);
         $this->assertEquals(
             [
@@ -94,24 +94,26 @@ EOF;
     #[DataProvider('forTestParseInvalid')]
     public function testParseInvalid(string $content): void
     {
-        $parsed = (array) Parser::parse($content);
+        $parsed = Parser::parse($content);
 
-        $this->assertArrayHasKey('name', $parsed);
-        $this->assertEmpty($parsed['name']);
-        $this->assertArrayHasKey('short_description', $parsed);
-        $this->assertEmpty($parsed['short_description']);
-        $this->assertArrayHasKey('sections', $parsed);
-        $this->assertEmpty($parsed['sections']);
+        $this->assertObjectHasProperty('name', $parsed);
+        $this->assertEmpty($parsed->name);
+        $this->assertObjectHasProperty('short_description', $parsed);
+        $this->assertEmpty($parsed->short_description);
+        $this->assertObjectHasProperty('sections', $parsed);
+        $this->assertEmpty($parsed->sections);
     }
 
-    /** @param ParsedContent $parsed */
-    protected function assertPlugin(array $parsed, bool $full = false): void
+    protected function assertPlugin(ParsedContent $parsed, bool $full = false): void
     {
-        $this->assertArrayHasKey('name', $parsed);
-        $this->assertArrayHasKey('short_description', $parsed);
-        $this->assertArrayHasKey('sections', $parsed);
-        $this->assertNotEmpty($parsed['sections']);
-        $this->assertArrayHasKey('other_notes', $parsed['sections']);
+        $this->assertObjectHasProperty('name', $parsed);
+        $this->assertObjectHasProperty('short_description', $parsed);
+        $this->assertObjectHasProperty('sections', $parsed);
+        $this->assertNotEmpty($parsed->sections);
+        $this->assertArrayHasKey('other_notes', $parsed->sections);
+
+        $parsed = (array) $parsed;
+
         unset($parsed['sections']);
         $this->assertEquals(
             [
@@ -124,9 +126,12 @@ EOF;
 
     public function testParsePlugin(): void
     {
-        $parsed = (array) Parser::parse(TestHelpers::get('plugin.php'));
+        $parsed = Parser::parse(TestHelpers::get('plugin.php'));
 
         $this->assertPlugin($parsed);
+
+        $parsed = (array) $parsed;
+
         $this->assertEquals(
             TestHelpers::BASIC_METADATA,
             json_decode($parsed['sections']['other_notes'], true)
@@ -135,9 +140,12 @@ EOF;
 
     public function testParsePluginMetadata(): void
     {
-        $parsed = (array) Parser::parse(TestHelpers::get('metadata.php'));
+        $parsed = Parser::parse(TestHelpers::get('metadata.php'));
 
         $this->assertPlugin($parsed, true);
+
+        $parsed = (array) $parsed;
+
         $this->assertEquals(
             [
                 ...TestHelpers::BASIC_METADATA,
