@@ -120,7 +120,7 @@ EOF;
                 ...TestHelpers::COMMON_DATA,
                 ...($full ? TestHelpers::NON_METADATA : []),
             ],
-            $parsed
+            array_filter($parsed)
         );
     }
 
