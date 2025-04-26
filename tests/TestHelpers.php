@@ -39,4 +39,26 @@ final class TestHelpers
     {
         return implode(DIRECTORY_SEPARATOR, [__DIR__, 'fixtures', $file]);
     }
+
+    /** @return array<string, string> */
+    public static function commonMetadata(): array
+    {
+        $map = [
+            'name' => 'Name',
+            'stable_tag' => 'Version',
+            'short_description' => 'Description',
+            'requires' => 'RequiresWP',
+        ];
+
+        $values = [];
+
+        foreach ($map as $key => $value) {
+            $values[$value] = self::COMMON_DATA[$key];
+        }
+
+        $values['Title'] = $values['Name'];
+        $values['AuthorName'] = self::BASIC_METADATA['Author'];
+
+        return $values;
+    }
 }

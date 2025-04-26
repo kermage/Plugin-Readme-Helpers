@@ -30,6 +30,17 @@ class Parser
         'screenshot' => 'screenshots',
     ];
 
+    public const PHP_MAP = [
+        'plugin uri' => 'Plugin URI',
+        'author' => 'Author',
+        'author uri' => 'Author URI',
+        'text domain' => 'Text Domain',
+        'domain path' => 'Domain Path',
+        'network' => 'Network',
+        'update uri' => 'Update URI',
+        'requires plugins' => 'Requires Plugins',
+    ];
+
     public const HEADER_TRIMMER = "#= \t";
 
     protected function __construct()
@@ -56,16 +67,6 @@ class Parser
         $data = ['name' => trim($this->getNextNonEmptyLine($lines), self::HEADER_TRIMMER)];
         $isPhp = str_contains($data['name'], '<?php');
         $mapper = self::HEADERS_MAP;
-        $forPhp = [
-            'plugin uri' => 'Plugin URI',
-            'author' => 'Author',
-            'author uri' => 'Author URI',
-            'text domain' => 'Text Domain',
-            'domain path' => 'Domain Path',
-            'network' => 'Network',
-            'update uri' => 'Update URI',
-            'requires plugins' => 'Requires Plugins',
-        ];
 
         if ($isPhp) {
             while ('' !== $data['name'] && ! str_starts_with($data['name'], '*')) {
@@ -82,7 +83,7 @@ class Parser
                 'version' => 'stable_tag',
                 'description' => 'short_description',
             ];
-            $mapper += $forPhp;
+            $mapper += self::PHP_MAP;
         }
 
         $data += $this->getHeaders($lines, $mapper);
@@ -96,13 +97,24 @@ class Parser
         if ($isPhp) {
             $data['metadata'] = [];
 
-            foreach ($forPhp as $key) {
+            foreach (self::PHP_MAP as $key) {
                 if (empty($data[$key])) {
                     continue;
                 }
 
                 $data['metadata'][$key] = $data[$key];
                 unset($data[$key]);
+            }
+
+            $mapper = [
+                'name' => 'Plugin Name',
+                'stable_tag' => 'Version',
+                'short_description' => 'Description',
+                'requires' => 'Requires at least',
+            ];
+
+            foreach ($mapper as $key => $value) {
+                $data['metadata'][$value] = $data[$key];
             }
         }
 
@@ -167,7 +179,6 @@ class Parser
         [$key, $value] = explode(':', $line, 2);
         $key = strtolower(trim($key, "* \t"));
         $value = trim($value);
-        $map = self::HEADERS_MAP;
 
         if (! in_array($key, array_keys($mapper))) {
             return null;

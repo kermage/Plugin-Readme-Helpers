@@ -32,12 +32,17 @@ class Metadata
     /** @param array<mixed> $data */
     public static function create(array $data): Metadata
     {
+        $data['Plugin Name'] ??= $data['Title'] ?? '';
+        $data['Author Name'] ??= $data['Author'] ?? '';
+        $data['Title'] ??= $data['Plugin Name'];
+        $data['Author'] ??= $data['Author Name'];
+
         return new self(
-            $data['Plugin Name'] ?? '',
+            $data['Plugin Name'],
             $data['Plugin URI'] ?? '',
             $data['Version'] ?? '',
             $data['Description'] ?? '',
-            $data['Author'] ?? '',
+            $data['Author'],
             $data['Author URI'] ?? '',
             $data['Text Domain'] ?? '',
             $data['Domain Path'] ?? '',
@@ -46,8 +51,8 @@ class Metadata
             $data['Requires PHP'] ?? '',
             $data['Update URI'] ?? '',
             $data['Requires Plugins'] ?? '',
-            $data['Title'] ?? '',
-            $data['Author Name'] ?? '',
+            $data['Title'],
+            $data['Author Name'],
         );
     }
 }

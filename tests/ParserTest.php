@@ -142,7 +142,10 @@ EOF;
 
         $this->assertPlugin($parsed);
         $this->assertEquals(
-            TestHelpers::BASIC_METADATA,
+            [
+                ...TestHelpers::commonMetadata(),
+                ...TestHelpers::BASIC_METADATA,
+            ],
             array_filter((array) $parsed->metadata)
         );
     }
@@ -154,6 +157,7 @@ EOF;
         $this->assertPlugin($parsed, true);
         $this->assertEquals(
             [
+                ...TestHelpers::commonMetadata(),
                 ...TestHelpers::BASIC_METADATA,
                 ...TestHelpers::FULL_METADATA,
             ],
