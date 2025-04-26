@@ -8,23 +8,23 @@ declare(strict_types=1);
 
 namespace kermage\PluginReadmeHelpers;
 
-class ParsedContent
+readonly class ParsedContent
 {
     public function __construct(
-        public readonly string $name,
-        public readonly string $stable_tag,
-        public readonly string $short_description,
-        public readonly string $requires,
-        public readonly string $requires_php,
-        public readonly string $tested,
-        public readonly string $contributors,
-        public readonly string $donate_link,
-        public readonly string $license_uri,
-        public readonly string $license,
-        public readonly string $tags,
+        public string $name,
+        public string $stable_tag,
+        public string $short_description,
+        public string $requires,
+        public string $requires_php,
+        public string $tested,
+        public string $contributors,
+        public string $donate_link,
+        public string $license_uri,
+        public string $license,
+        public string $tags,
         /** @var array<string, string> */
-        public readonly array $sections,
-        public readonly Metadata $metadata,
+        public array $sections,
+        public Metadata $metadata,
     ) {
     }
 

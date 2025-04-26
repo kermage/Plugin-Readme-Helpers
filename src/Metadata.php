@@ -8,24 +8,24 @@ declare(strict_types=1);
 
 namespace kermage\PluginReadmeHelpers;
 
-class Metadata
+readonly class Metadata
 {
     public function __construct(
-        public readonly string $Name,
-        public readonly string $PluginURI,
-        public readonly string $Version,
-        public readonly string $Description,
-        public readonly string $Author,
-        public readonly string $AuthorURI,
-        public readonly string $TextDomain,
-        public readonly string $DomainPath,
-        public readonly string $Network,
-        public readonly string $RequiresWP,
-        public readonly string $RequiresPHP,
-        public readonly string $UpdateURI,
-        public readonly string $RequiresPlugins,
-        public readonly string $Title,
-        public readonly string $AuthorName,
+        public string $Name,
+        public string $PluginURI,
+        public string $Version,
+        public string $Description,
+        public string $Author,
+        public string $AuthorURI,
+        public string $TextDomain,
+        public string $DomainPath,
+        public string $Network,
+        public string $RequiresWP,
+        public string $RequiresPHP,
+        public string $UpdateURI,
+        public string $RequiresPlugins,
+        public string $Title,
+        public string $AuthorName,
     ) {
     }
 

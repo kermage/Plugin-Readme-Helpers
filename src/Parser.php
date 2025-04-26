@@ -65,7 +65,7 @@ class Parser
         $content = str_replace("\r", "", $content);
         $lines = explode("\n", $content);
         $data = ['name' => trim($this->getNextNonEmptyLine($lines), self::HEADER_TRIMMER)];
-        $isPhp = str_contains($data['name'], '<?php');
+        $isPhp = $this->maybePhpOrComment($data['name']);
         $mapper = self::HEADERS_MAP;
 
         if ($isPhp) {
