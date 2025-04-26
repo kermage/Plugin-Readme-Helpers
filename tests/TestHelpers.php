@@ -22,17 +22,17 @@ final class TestHelpers
     ];
 
     public const BASIC_METADATA = [
-        'Plugin URI' => 'https://github.com/kermage/Plugin-Readme-Helpers',
+        'PluginURI' => 'https://github.com/kermage/Plugin-Readme-Helpers',
         'Author' => 'Gene Alyson Fortunado Torcende',
-        'Author URI' => 'https://github.com/kermage',
-        'Text Domain' => 'test-plugin',
+        'AuthorURI' => 'https://github.com/kermage',
+        'TextDomain' => 'test-plugin',
     ];
 
     public const FULL_METADATA = [
-        'Domain Path' => 'languages',
+        'DomainPath' => 'languages',
         'Network' => 'true',
-        'Update URI' => 'https://github.com/kermage/Plugin-Readme-Helpers',
-        'Requires Plugins' => 'hello-dolly',
+        'UpdateURI' => 'https://github.com/kermage/Plugin-Readme-Helpers',
+        'RequiresPlugins' => 'hello-dolly',
     ];
 
     public static function get(string $file): string

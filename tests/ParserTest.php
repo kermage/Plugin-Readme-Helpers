@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use kermage\PluginReadmeHelpers\Metadata;
 use PHPUnit\Framework\TestCase;
 use kermage\PluginReadmeHelpers\ParsedContent;
 use kermage\PluginReadmeHelpers\Parser;
@@ -39,7 +40,8 @@ final class ParserTest extends TestCase
             ['description', 'installation', 'faq', 'screenshots', 'changelog'],
             array_keys($parsed->sections)
         );
-        $this->assertEmpty($parsed->metadata);
+        $this->assertInstanceOf(Metadata::class, $parsed->metadata);
+        $this->assertEmpty(array_filter((array) $parsed->metadata));
     }
 
     public function testParseString(): void
@@ -68,7 +70,8 @@ EOF;
         $this->assertObjectHasProperty('sections', $parsed);
         $this->assertObjectHasProperty('metadata', $parsed);
         $this->assertEmpty($parsed->sections);
-        $this->assertEmpty($parsed->metadata);
+        $this->assertInstanceOf(Metadata::class, $parsed->metadata);
+        $this->assertEmpty(array_filter((array) $parsed->metadata));
     }
 
     protected function assertBase(ParsedContent $parsed): void
@@ -107,7 +110,8 @@ EOF;
         $this->assertObjectHasProperty('sections', $parsed);
         $this->assertEmpty($parsed->sections);
         $this->assertObjectHasProperty('metadata', $parsed);
-        $this->assertEmpty($parsed->metadata);
+        $this->assertInstanceOf(Metadata::class, $parsed->metadata);
+        $this->assertEmpty(array_filter((array) $parsed->metadata));
     }
 
     protected function assertPlugin(ParsedContent $parsed, bool $full = false): void
@@ -117,6 +121,7 @@ EOF;
         $this->assertObjectHasProperty('sections', $parsed);
         $this->assertEmpty($parsed->sections);
         $this->assertObjectHasProperty('metadata', $parsed);
+        $this->assertInstanceOf(Metadata::class, $parsed->metadata);
         $this->assertNotEmpty($parsed->metadata);
 
         $parsed = (array) $parsed;
@@ -138,7 +143,7 @@ EOF;
         $this->assertPlugin($parsed);
         $this->assertEquals(
             TestHelpers::BASIC_METADATA,
-            $parsed->metadata
+            array_filter((array) $parsed->metadata)
         );
     }
 
@@ -152,7 +157,7 @@ EOF;
                 ...TestHelpers::BASIC_METADATA,
                 ...TestHelpers::FULL_METADATA,
             ],
-            $parsed->metadata
+            array_filter((array) $parsed->metadata)
         );
     }
 }

@@ -24,8 +24,7 @@ class ParsedContent
         public readonly string $tags,
         /** @var array<string, string> */
         public readonly array $sections,
-        /** @var array<string, string> */
-        public readonly array $metadata,
+        public readonly Metadata $metadata,
     ) {
     }
 
@@ -45,7 +44,7 @@ class ParsedContent
             $data['license'] ?? '',
             $data['tags'] ?? '',
             $data['sections'] ?? [],
-            $data['metadata'] ?? [],
+            Metadata::create($data['metadata'] ?? []),
         );
     }
 }
