@@ -180,7 +180,7 @@ class Parser
         $key = strtolower(trim($key, "* \t"));
         $value = trim($value);
 
-        if (! in_array($key, array_keys($mapper))) {
+        if (! array_key_exists($key, $mapper)) {
             return null;
         }
 
