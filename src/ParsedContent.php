@@ -10,6 +10,8 @@ namespace kermage\PluginReadmeHelpers;
 
 readonly class ParsedContent
 {
+    use ParsesCSV;
+
     public function __construct(
         public string $name,
         public string $stable_tag,
@@ -17,11 +19,13 @@ readonly class ParsedContent
         public string $requires,
         public string $requires_php,
         public string $tested,
-        public string $contributors,
+        /** @var string[] */
+        public array $contributors,
         public string $donate_link,
         public string $license_uri,
         public string $license,
-        public string $tags,
+        /** @var string[] */
+        public array $tags,
         /** @var array<string, string> */
         public array $sections,
         public Metadata $metadata,
@@ -38,11 +42,11 @@ readonly class ParsedContent
             $data['requires'] ?? '',
             $data['requires_php'] ?? '',
             $data['tested'] ?? '',
-            $data['contributors'] ?? '',
+            self::parseCommaSeparated($data['contributors'] ?? ''),
             $data['donate_link'] ?? '',
             $data['license_uri'] ?? '',
             $data['license'] ?? '',
-            $data['tags'] ?? '',
+            self::parseCommaSeparated($data['tags'] ?? ''),
             $data['sections'] ?? [],
             Metadata::create($data['metadata'] ?? []),
         );

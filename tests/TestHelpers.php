@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 final class TestHelpers
@@ -14,11 +16,11 @@ final class TestHelpers
 
     public const NON_METADATA = [
         'tested' => '6.6.1',
-        'contributors' => 'gaft',
+        'contributors' => ['gaft'],
         'donate_link' => 'https://www.paypal.me/GAFT',
         'license_uri' => 'https://www.gnu.org/licenses/licenses.html',
         'license' => 'GPLv3',
-        'tags' => 'basic, sample',
+        'tags' => ['basic', 'sample'],
     ];
 
     public const BASIC_METADATA = [
@@ -32,7 +34,7 @@ final class TestHelpers
         'DomainPath' => 'languages',
         'Network' => 'true',
         'UpdateURI' => 'https://github.com/kermage/Plugin-Readme-Helpers',
-        'RequiresPlugins' => 'hello-dolly',
+        'RequiresPlugins' => ['hello-dolly'],
     ];
 
     public static function get(string $file): string

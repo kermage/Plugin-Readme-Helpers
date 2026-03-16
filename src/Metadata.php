@@ -10,6 +10,8 @@ namespace kermage\PluginReadmeHelpers;
 
 readonly class Metadata
 {
+    use ParsesCSV;
+
     public function __construct(
         public string $Name,
         public string $PluginURI,
@@ -23,7 +25,8 @@ readonly class Metadata
         public string $RequiresWP,
         public string $RequiresPHP,
         public string $UpdateURI,
-        public string $RequiresPlugins,
+        /** @var string[] */
+        public array $RequiresPlugins,
         public string $Title,
         public string $AuthorName,
     ) {
@@ -50,7 +53,7 @@ readonly class Metadata
             $data['Requires at least'] ?? '',
             $data['Requires PHP'] ?? '',
             $data['Update URI'] ?? '',
-            $data['Requires Plugins'] ?? '',
+            self::parseCommaSeparated($data['Requires Plugins'] ?? ''),
             $data['Title'],
             $data['Author Name'],
         );
