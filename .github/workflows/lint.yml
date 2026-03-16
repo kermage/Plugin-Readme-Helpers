@@ -1,0 +1,25 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: "shivammathur/setup-php@v2"
+
+      - uses: "ramsey/composer-install@v3"
+        with:
+          require-lock-file: true
+
+      - run: composer run lint
