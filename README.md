@@ -19,41 +19,38 @@ print_r($output);
 
 ### Output
 
-```txt
+```php
 kermage\PluginReadmeHelpers\ParsedContent Object
 (
-    [name] =>
-    [stable_tag] =>
-    [short_description] =>
-    [requires] =>
-    [requires_php] =>
-    [tested] =>
-    [contributors] =>
-    [donate_link] =>
-    [license_uri] =>
-    [license] =>
-    [tags] =>
-    [sections] => Array
-        (
-        )
-
+    [name] => string
+    [stable_tag] => string
+    [short_description] => string
+    [requires] => string
+    [requires_php] => string
+    [tested] => string
+    [contributors] => string[]
+    [donate_link] => string
+    [license_uri] => string
+    [license] => string
+    [tags] => string[]
+    [sections] => array<string, string>
     [metadata] => kermage\PluginReadmeHelpers\Metadata Object
         (
-            [Name] =>
-            [PluginURI] =>
-            [Version] =>
-            [Description] =>
-            [Author] =>
-            [AuthorURI] =>
-            [TextDomain] =>
-            [DomainPath] =>
-            [Network] =>
-            [RequiresWP] =>
-            [RequiresPHP] =>
-            [UpdateURI] =>
-            [RequiresPlugins] =>
-            [Title] =>
-            [AuthorName] =>
+            [Name] => string
+            [PluginURI] => string
+            [Version] => string
+            [Description] => string
+            [Author] => string
+            [AuthorURI] => string
+            [TextDomain] => string
+            [DomainPath] => string
+            [Network] => string
+            [RequiresWP] => string
+            [RequiresPHP] => string
+            [UpdateURI] => string
+            [RequiresPlugins] => string[]
+            [Title] => string
+            [AuthorName] => string
         )
 )
 ```

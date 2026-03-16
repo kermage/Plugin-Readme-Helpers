@@ -20,8 +20,6 @@ jobs:
         with:
           coverage: xdebug
 
-      - uses: "ramsey/composer-install@v3"
-        with:
-          require-lock-file: true
+      - uses: "ramsey/composer-install@v4"
 
       - run: composer run test
